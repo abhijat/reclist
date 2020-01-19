@@ -19,8 +19,19 @@ and analyze_entry parent entry =
   | false ->
      printf "[F] %s\n" fullpath
 
-  
+
+let test_http () =
+  let open Lwt in
+  let open Cohttp in
+  let open Cohttp_lwt_unix in
+  let response = Client.get (Uri.of_string "https://www.reddit.com/r/askhistorians.json") in
+  response >>=
+    fun (resp, body) ->
+    let code = resp |> Response.status |> Code.code_of_status in
+    printf "response code %d\n" code;
+    printf "headers %s\n" (resp |> Response.headers |> Header.to_string);
+    body |> Cohttp_lwt.Body.to_string
 
 let () =
-  analyze_path "/tmp"
-    
+  let body = Lwt_main.run (test_http ()) in
+  print_endline body
