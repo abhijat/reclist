@@ -34,4 +34,4 @@ let test_http () =
 
 let () =
   let body = Lwt_main.run (test_http ()) in
-  print_endline body
+  Yojson.Basic.pretty_to_channel stdout (Yojson.Basic.from_string body)
